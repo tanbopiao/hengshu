@@ -5,12 +5,12 @@
 
 工程映射：VAL-03 防漂移：禁基础能力退化。典出《周易·恒卦》「恒，久也」——守恒之枢机。
 
-边界：本件为算子骨架 v0——接口先立、实现随进化轮补齐；遵循元法第四条「只增不覆盖」，
+边界：本件为算子 v1——骨架桩已按命名映射补齐实现；遵循元法第四条「只增不覆盖」，
 方法只增不改名不删，行为变更走新版本；凭据不入档，宣称与事实分离。
 """
 
 class Hengshu:
-    """恒枢（HENGSHU）算子骨架 v0。"""
+    """恒枢（HENGSHU）算子 v1。"""
 
     ANCHOR = "Ω₀⊂⊙∞⊂Ω｜DID-BR-000002"
     CODE = "HENGSHU"
@@ -31,5 +31,11 @@ class Hengshu:
         }
 
     def guard(self, baseline, candidate):
-        """恒守其基：候选对基线回归，退化即拦（骨架桩：实现随进化轮补齐）。"""
-        raise NotImplementedError("HENGSHU.guard 骨架桩，候进化轮补齐")
+        """恒守其基：候选对基线回归，退化即拦。"""
+        regressions = []
+        for k, v in baseline.items():
+            if k in candidate and candidate[k] < v:
+                regressions.append({"metric": k, "baseline": v, "candidate": candidate[k]})
+        verdict = {"passed": not regressions, "regressions": regressions}
+        self.events.append({"event": "guard", "passed": verdict["passed"]})
+        return verdict
